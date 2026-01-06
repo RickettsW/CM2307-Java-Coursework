@@ -1,4 +1,4 @@
-package studentrentals;
+package studentrentals.Classes;
 
 public class Review {
     private int starRating;
@@ -14,6 +14,12 @@ public class Review {
         this.author = author;
         this.reviewedProperty = reviewedProperty;
     }
+
+    @Override
+    public String toString() {
+        return "Review by " + author.getUsername() +  " for " + reviewedProperty.getAddress() +": " + starRating + " stars, comment: \"" + comment + "\"";
+}
+
 
     public int getStarRating() {
         return starRating;
@@ -35,6 +41,18 @@ public class Review {
         return reviewedProperty;
     }
 
+    public void setStarRating(int starRating) {
+        this.starRating = starRating;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+
+        
+    
+
 }
 
 
@@ -43,4 +61,5 @@ public class Review {
 createReview()
 updateReview()
 deleteReview()
+ADDED IN REVIEW CONTROLLER UPDATE UML
 */

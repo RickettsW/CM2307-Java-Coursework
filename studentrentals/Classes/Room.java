@@ -1,4 +1,4 @@
-package studentrentals;
+package studentrentals.Classes;
 
 public class Room {
 
@@ -33,14 +33,8 @@ public class Room {
         return availableDates;
     }
 
+    public void updateAvailability(String newDates){
+        this.availableDates = newDates;
+    }
 
 }
-
-
-
-
-
-
-/*future methods
-updateAvailability()
- */

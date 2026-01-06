@@ -1,9 +1,9 @@
-package studentrentals;
+package studentrentals.Classes;
 
 public abstract class User {
 
     private String username;
-    private String password; // should be securely hashed at somme point
+    private String hashedPassword;
     private String firstName;
     private String lastName;
     private String email;
@@ -15,7 +15,7 @@ public abstract class User {
     public User(String username, String password, String firstName, String lastName, String email, String DOB){
         
         this.username = username;
-        this.password = password;
+        this.hashedPassword = PasswordUtils.hashPassword(password);
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -27,8 +27,8 @@ public abstract class User {
         return username;
     }
 
-    public String getPassword(){
-        return password;
+    public String getHashedPassword(){
+        return hashedPassword;
     }
     //Questionable if needed 
 
@@ -52,10 +52,11 @@ public abstract class User {
 
     }
 
-    public boolean logIn(String enteredUsername, String enteredPassword){
-        return username.equals(enteredUsername) && password.equals(enteredPassword);
+    public boolean logIn(String enteredUsername, String enteredPassword) {
+        String hashedInput = PasswordUtils.hashPassword(enteredPassword);
+        return username.equals(enteredUsername) && hashedPassword.equals(hashedInput);
+}
 
-    }
 
     public void logOff(){
         System.out.println(username + " has logged off");

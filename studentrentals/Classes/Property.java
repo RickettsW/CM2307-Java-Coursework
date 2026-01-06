@@ -1,4 +1,7 @@
-package studentrentals;
+package studentrentals.Classes;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Property {
 
@@ -7,6 +10,7 @@ public class Property {
     private String description;
     private String area;
     private Homeowner homeowner;
+    private List<Room> rooms;
 
     public Property(String address, String postCode, String description, String area, Homeowner homeowner){
 
@@ -15,6 +19,7 @@ public class Property {
         this.description = description;
         this.area = area;
         this.homeowner = homeowner;
+        this.rooms = new ArrayList<>();
     }
 
     // getters
@@ -38,6 +43,18 @@ public class Property {
         return homeowner;
     }
 
+    public void addRoom(Room room){
+    rooms.add(room);
+    }
+
+    public void removeRoom(Room room){
+        rooms.remove(room);
+    }
+
+    public List<Room> getRooms(){
+        return rooms;
+    }
+
     
 }
 
@@ -46,4 +63,5 @@ public class Property {
 
 /*future method
 calcAverageStarRating()
+did in review controller update uml
  */
