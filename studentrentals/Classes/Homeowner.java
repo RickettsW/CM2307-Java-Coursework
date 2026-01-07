@@ -13,11 +13,4 @@ public class Homeowner extends User {
         controller.getHomeownerBooking(this);
 
     }
-    
-
-/*  future methods
-    viewHomeownerBookings() did in booking controller update uml
-    */
-
-    
 }

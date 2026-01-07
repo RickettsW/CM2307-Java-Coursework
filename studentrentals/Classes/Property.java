@@ -42,7 +42,7 @@ public class Property {
     public Homeowner getHomeowner() {
         return homeowner;
     }
-
+    //methods
     public void addRoom(Room room){
     rooms.add(room);
     }

@@ -34,8 +34,18 @@ public class BookingController {
     return true;
 }
 
+    public void acceptBooking(Booking booking) {
+        booking.confirmBooking();
+        System.out.println("Booking accepted.");
+    }
+
+    public void rejectBooking(Booking booking) {
+        booking.rejectBooking();
+        System.out.println("Booking rejected.");
+    }
+
+
 private boolean datesOverlap(String start1, String end1, String start2, String end2){
-    // Simple string compare, assuming format "dd-MM-yyyy"
     return !(end1.compareTo(start2) < 0 || start1.compareTo(end2) > 0);
 }
 
@@ -52,10 +62,8 @@ private boolean datesOverlap(String start1, String end1, String start2, String e
                 System.out.println(booking);
             }
         }
-
-    
     }
-
+    //gets specific homeowner booking
     public void getHomeownerBooking(Homeowner homeowner) {
     for (Booking booking : bookings) {
         if (booking.getBookedProperty().getHomeowner().equals(homeowner)) {
@@ -63,6 +71,17 @@ private boolean datesOverlap(String start1, String end1, String start2, String e
         }
     }
 }
+    //gets all homeowner bookings
+public List<Booking> getHomeownerBookings(Homeowner homeowner) {
+    List<Booking> result = new ArrayList<>();
+    for (Booking booking : bookings) {
+        if (booking.getBookedProperty().getHomeowner().equals(homeowner)) {
+            result.add(booking);
+        }
+    }
+    return result;
+}
+
 
     
 }

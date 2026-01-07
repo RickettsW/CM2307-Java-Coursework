@@ -1,8 +1,7 @@
 package studentrentals.Test;
 
-import studentrentals.Classes.*;       // Student, Property, Review
-import studentrentals.Controllers.*;   // ReviewController
-
+import studentrentals.Classes.*;
+import studentrentals.Controllers.*;
 public class TestApp {
     public static void main(String[] args) {
 
@@ -31,7 +30,6 @@ public class TestApp {
         student.requestBooking(property2, "04-03-2026", "11-03-2026", bookingController);
 
         // Step 5: check if review is stored
-        // (we will need a method to print stored reviews)
         reviewController.getReviews();
         bookingController.getBookings();
 

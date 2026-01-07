@@ -44,46 +44,78 @@ public class MenuController {
         System.out.println("Goodbye!");
     }
 
-    // ------------------- Registration/Login -------------------
-    private void registerUser() {
-        System.out.print("Enter username: ");
-        String username = scanner.nextLine();
-        System.out.print("Enter password: ");
-        String password = scanner.nextLine();
-        System.out.print("Enter first name: ");
-        String first = scanner.nextLine();
-        System.out.print("Enter last name: ");
-        String last = scanner.nextLine();
-        System.out.print("Enter email: ");
-        String email = scanner.nextLine();
-        System.out.print("Enter DOB: ");
-        String dob = scanner.nextLine();
+    // --------------------------------------------
+    // VALIDATION HELPERS
 
-        System.out.print("Are you a Student (S) or Homeowner (H)? ");
-        String type = scanner.nextLine().toUpperCase();
+    private String readValidatedString(String prompt, int min, int max, String type) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+
+            if (input.isEmpty()) System.out.println("Cannot be empty.");
+            else if (input.length() < min) System.out.println("Too short.");
+            else if (input.length() > max) System.out.println("Too long.");
+            else if (type.equals("EMAIL") &&
+                    !input.matches("[\\w._%+-]+@[\\w.-]+\\.[A-Za-z]{2,6}"))
+                System.out.println("Invalid email.");
+            else return input;
+        }
+    }
+
+    private int readInt(String prompt, int min, int max) {
+        while (true) {
+            System.out.print(prompt);
+            try {
+                int v = Integer.parseInt(scanner.nextLine());
+                if (v < min || v > max) System.out.println("Out of range.");
+                else return v;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid number.");
+            }
+        }
+    }
+
+    private boolean usernameExists(String username) {
+        for (User u : users)
+            if (u.getUsername().equalsIgnoreCase(username)) return true;
+        return false;
+    }
+
+    // ---------------------------------------
+    // REGISTER / LOGIN 
+
+    private void registerUser() {
+        String username;
+        do {
+            username = readValidatedString("Username: ", 5, 15, "TEXT");
+            if (usernameExists(username)) System.out.println("Username taken.");
+        } while (usernameExists(username));
+
+        String password = readValidatedString("Password: ", 6, 20, "TEXT");
+        String first = readValidatedString("First name: ", 2, 30, "TEXT");
+        String last = readValidatedString("Last name: ", 2, 30, "TEXT");
+        String email = readValidatedString("Email: ", 5, 50, "EMAIL");
+        String dob = readValidatedString("DOB: ", 6, 20, "TEXT");
+
+        String type;
+        do {
+            type = readValidatedString("Student (S) or Homeowner (H)? ", 1, 1, "TEXT").toUpperCase();
+        } while (!type.equals("S") && !type.equals("H"));
 
         if (type.equals("S")) {
-            System.out.print("Enter university: ");
-            String uni = scanner.nextLine();
-            System.out.print("Enter student ID: ");
-            String studentId = scanner.nextLine();
-            Student student = new Student(username, password, first, last, email, dob, uni, studentId);
-            users.add(student);
+            String uni = readValidatedString("University: ", 5, 50, "TEXT");
+            String sid = readValidatedString("Student ID: ", 5, 15, "TEXT");
+            users.add(new Student(username, password, first, last, email, dob, uni, sid));
             System.out.println("Student registered!");
-        } else if (type.equals("H")) {
-            Homeowner homeowner = new Homeowner(username, password, first, last, email, dob);
-            users.add(homeowner);
-            System.out.println("Homeowner registered!");
         } else {
-            System.out.println("Invalid type");
+            users.add(new Homeowner(username, password, first, last, email, dob));
+            System.out.println("Homeowner registered!");
         }
     }
 
     private void loginUser() {
-        System.out.print("Username: ");
-        String username = scanner.nextLine();
-        System.out.print("Password: ");
-        String password = scanner.nextLine();
+        String username = readValidatedString("Username: ", 5, 15, "TEXT");
+        String password = readValidatedString("Password: ", 6, 20, "TEXT");
 
         for (User u : users) {
             if (u.logIn(username, password)) {
@@ -92,7 +124,7 @@ public class MenuController {
                 return;
             }
         }
-        System.out.println("Login failed");
+        System.out.println("Login failed.");
     }
 
     private void logOff() {
@@ -100,126 +132,147 @@ public class MenuController {
         loggedInUser = null;
     }
 
-    // ------------------- Homeowner Menu -------------------
+    // -----------------------------------------
+    // HOMEOWNER MENU 
+
     private void homeownerMenu(Homeowner h) {
         System.out.println("\n--- Homeowner Menu ---");
         System.out.println("1. Add Property");
-        System.out.println("2. Add Room to Property");
-        System.out.println("3. View Bookings");
-        System.out.println("4. Logout");
+        System.out.println("2. Add Room");
+        System.out.println("3. View / Manage Bookings");
+        System.out.println("4. View Reviews");
+        System.out.println("5. Logout");
         System.out.print("> ");
         String choice = scanner.nextLine();
 
         switch (choice) {
             case "1" -> addProperty(h);
             case "2" -> addRoom(h);
-            case "3" -> bookingController.getHomeownerBooking(h);
-            case "4" -> logOff();
+            case "3" -> manageBookings(h);
+            case "4" -> reviewController.getReviewsByHomeowner(h);
+            case "5" -> logOff();
             default -> System.out.println("Invalid option");
         }
     }
 
     private void addProperty(Homeowner h) {
-        System.out.print("Enter address: ");
-        String address = scanner.nextLine();
-        System.out.print("Enter postcode: ");
-        String postCode = scanner.nextLine();
-        System.out.print("Enter description: ");
-        String desc = scanner.nextLine();
-        System.out.print("Enter area: ");
-        String area = scanner.nextLine();
+        String addr = readValidatedString("Address: ", 5, 100, "TEXT");
+        String pc = readValidatedString("Postcode: ", 3, 10, "TEXT");
+        String desc = readValidatedString("Description: ", 5, 200, "TEXT");
+        String area = readValidatedString("Area: ", 2, 50, "TEXT");
 
-        Property p = new Property(address, postCode, desc, area, h);
-        properties.add(p);
+        properties.add(new Property(addr, pc, desc, area, h));
         System.out.println("Property added!");
     }
 
     private void addRoom(Homeowner h) {
-        List<Property> myProperties = new ArrayList<>();
-        for (Property p : properties) if (p.getHomeowner().equals(h)) myProperties.add(p);
+        List<Property> mine = new ArrayList<>();
+        for (Property p : properties)
+            if (p.getHomeowner().equals(h)) mine.add(p);
 
-        if (myProperties.isEmpty()) {
-            System.out.println("No properties found. Add a property first.");
+        if (mine.isEmpty()) {
+            System.out.println("No properties.");
             return;
         }
 
-        for (int i = 0; i < myProperties.size(); i++)
-            System.out.println(i + ": " + myProperties.get(i).getAddress());
+        for (int i = 0; i < mine.size(); i++)
+            System.out.println(i + ": " + mine.get(i).getAddress());
 
-        System.out.print("Select property index: ");
-        int index = Integer.parseInt(scanner.nextLine());
-        Property prop = myProperties.get(index);
+        int idx = readInt("Select property: ", 0, mine.size() - 1);
+        Property p = mine.get(idx);
 
-        System.out.print("Enter room type: ");
-        String type = scanner.nextLine();
-        System.out.print("Enter monthly rent: ");
-        int rent = Integer.parseInt(scanner.nextLine());
-        System.out.print("Enter amenities: ");
-        String amen = scanner.nextLine();
-        System.out.print("Enter available dates (dd-MM-yyyy to dd-MM-yyyy): ");
-        String dates = scanner.nextLine();
+        String type = readValidatedString("Room type: ", 3, 30, "TEXT");
+        int rent = readInt("Rent: ", 1, 10000);
+        String amen = readValidatedString("Amenities: ", 3, 100, "TEXT");
+        String dates = readValidatedString("Available dates (dd-MM-yyyy to dd-MM-yyyy): ", 17, 25, "TEXT");
 
-        Room r = new Room(type, rent, amen, dates);
-        prop.addRoom(r);
+        p.addRoom(new Room(type, rent, amen, dates));
         System.out.println("Room added!");
     }
 
-    // ------------------- Student Menu -------------------
+    private void manageBookings(Homeowner h) {
+        List<Booking> list = bookingController.getHomeownerBookings(h);
+
+        if (list.isEmpty()) {
+            System.out.println("No bookings.");
+            return;
+        }
+
+        for (int i = 0; i < list.size(); i++)
+            System.out.println(i + ": " + list.get(i));
+
+        int idx = readInt("Select booking: ", 0, list.size() - 1);
+        Booking b = list.get(idx);
+
+        if (b.getBookingStatus() != BookingStatus.PENDING) {
+            System.out.println("Already processed.");
+            return;
+        }
+
+        System.out.println("1. Accept\n2. Reject");
+        String c = scanner.nextLine();
+
+        if (c.equals("1")) bookingController.acceptBooking(b);
+        else if (c.equals("2")) bookingController.rejectBooking(b);
+    }
+
+    // --------------------------------------------
+    // STUDENT MENU 
+
     private void studentMenu(Student s) {
         System.out.println("\n--- Student Menu ---");
         System.out.println("1. Search Rooms");
         System.out.println("2. Request Booking");
-        System.out.println("3. Leave Review");
-        System.out.println("4. Logout");
+        System.out.println("3. View My Bookings");
+        System.out.println("4. Leave Review");
+        System.out.println("5. Logout");
         System.out.print("> ");
         String choice = scanner.nextLine();
 
         switch (choice) {
             case "1" -> searchRooms();
             case "2" -> requestBooking(s);
-            case "3" -> leaveReview(s);
-            case "4" -> logOff();
+            case "3" -> s.viewStudentBookings(bookingController);
+            case "4" -> leaveReview(s);
+            case "5" -> logOff();
             default -> System.out.println("Invalid option");
         }
     }
 
-    private void searchRooms() {
-        System.out.print("Enter area to search: ");
-        String area = scanner.nextLine();
-        System.out.print("Enter min rent: ");
-        int min = Integer.parseInt(scanner.nextLine());
-        System.out.print("Enter max rent: ");
-        int max = Integer.parseInt(scanner.nextLine());
+    // -----------------------------------------
+    // STUDENT ACTIONS 
 
-        System.out.println("\n--- Search Results ---");
+    private void searchRooms() {
+        String area = readValidatedString("Area: ", 2, 50, "TEXT");
+        int min = readInt("Min rent: ", 0, 10000);
+        int max = readInt("Max rent: ", min, 10000);
+
         for (Property p : properties) {
             if (!p.getArea().equalsIgnoreCase(area)) continue;
+
             for (Room r : p.getRooms()) {
                 if (r.getMonthlyRent() >= min && r.getMonthlyRent() <= max) {
-                    System.out.println(p.getAddress() + " | " + r.getRoomType() + " £" + r.getMonthlyRent() +
-                            " | Available: " + r.getAvailableDates());
+                    System.out.println(p.getAddress() + " | " + r.getRoomType() +
+                            " | £" + r.getMonthlyRent() +
+                            " | " + r.getAvailableDates());
                 }
             }
         }
     }
 
     private void requestBooking(Student s) {
-        System.out.print("Enter property address: ");
-        String addr = scanner.nextLine();
-        System.out.print("Enter room type: ");
-        String type = scanner.nextLine();
-        System.out.print("Enter start date: ");
-        String start = scanner.nextLine();
-        System.out.print("Enter end date: ");
-        String end = scanner.nextLine();
+        String addr = readValidatedString("Property address: ", 5, 100, "TEXT");
+        String type = readValidatedString("Room type: ", 3, 30, "TEXT");
+        String start = readValidatedString("Start date: ", 10, 10, "TEXT");
+        String end = readValidatedString("End date: ", 10, 10, "TEXT");
 
         for (Property p : properties) {
             if (p.getAddress().equalsIgnoreCase(addr)) {
                 for (Room r : p.getRooms()) {
                     if (r.getRoomType().equalsIgnoreCase(type)) {
-                        Booking booking = new Booking("PENDING", start, end, s, p);
-                        if (bookingController.addBooking(booking))
-                            System.out.println("Booking request sent!");
+                        Booking b = new Booking(BookingStatus.PENDING, start, end, s, p);
+                        if (bookingController.addBooking(b))
+                            System.out.println("Booking requested!");
                         return;
                     }
                 }
@@ -229,12 +282,9 @@ public class MenuController {
     }
 
     private void leaveReview(Student s) {
-        System.out.print("Enter property address: ");
-        String addr = scanner.nextLine();
-        System.out.print("Enter stars (1-5): ");
-        int stars = Integer.parseInt(scanner.nextLine());
-        System.out.print("Enter comment: ");
-        String comment = scanner.nextLine();
+        String addr = readValidatedString("Property address: ", 5, 100, "TEXT");
+        int stars = readInt("Stars (1-5): ", 1, 5);
+        String comment = readValidatedString("Comment: ", 5, 200, "TEXT");
 
         for (Property p : properties) {
             if (p.getAddress().equalsIgnoreCase(addr)) {

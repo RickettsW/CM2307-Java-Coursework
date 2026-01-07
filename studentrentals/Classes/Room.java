@@ -16,7 +16,7 @@ public class Room {
         this.availableDates = availableDates;
     }
 
-
+    //getters
     public String getRoomType(){
         return roomType;
     }
@@ -32,7 +32,7 @@ public class Room {
     public String getAvailableDates(){
         return availableDates;
     }
-
+    //method
     public void updateAvailability(String newDates){
         this.availableDates = newDates;
     }

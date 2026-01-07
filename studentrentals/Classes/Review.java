@@ -20,7 +20,7 @@ public class Review {
         return "Review by " + author.getUsername() +  " for " + reviewedProperty.getAddress() +": " + starRating + " stars, comment: \"" + comment + "\"";
 }
 
-
+    //getters
     public int getStarRating() {
         return starRating;
     }
@@ -40,7 +40,7 @@ public class Review {
     public Property getReviewedProperty() {
         return reviewedProperty;
     }
-
+    //setters
     public void setStarRating(int starRating) {
         this.starRating = starRating;
     }

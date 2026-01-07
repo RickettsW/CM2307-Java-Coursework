@@ -2,14 +2,14 @@ package studentrentals.Classes;
 
 public class Booking {
     
-    private String bookingStatus;
+    private BookingStatus bookingStatus;
     private String startDate;
     private String endDate;
     private Student student;       
     
     private Property bookedProperty;     
 
-    public Booking(String bookingStatus, String startDate, String endDate, Student student,  Property bookedProperty) {
+    public Booking(BookingStatus bookingStatus, String startDate, String endDate, Student student,  Property bookedProperty) {
         this.bookingStatus = bookingStatus;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -24,8 +24,8 @@ public class Booking {
     }
 
     
-
-    public String getBookingStatus(){
+    //getters
+    public BookingStatus getBookingStatus(){
         return bookingStatus;
     }
 
@@ -44,17 +44,17 @@ public class Booking {
     public Property getBookedProperty(){
         return bookedProperty;
     }
-
+    //methods
     public void confirmBooking(){
-        bookingStatus = "CONFIRMED";
+        bookingStatus = BookingStatus.CONFIRMED;
     }
 
     public void rejectBooking(){
-        bookingStatus = "REJECTED";
+        bookingStatus = BookingStatus.REJECTED;
     }
 
     public void cancelBooking(){
-        bookingStatus = "CANCELLED";
+        bookingStatus = BookingStatus.CANCELLED;
     }
 
 }

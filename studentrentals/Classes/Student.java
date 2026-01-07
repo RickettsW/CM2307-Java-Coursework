@@ -29,7 +29,7 @@ public class Student extends User {
         return studentIdNumber;
     }
 
-
+    //methods
     public void leaveReview(Property property, int stars, String comment, ReviewController controller){
         System.out.println(this.getUsername() + " created a review for " + property.getAddress());
         Review review = new Review(stars, comment,"2026-01-04", this, property);
@@ -38,7 +38,7 @@ public class Student extends User {
 
     public void requestBooking(Property property, String start , String end,  BookingController controller){
         System.out.println(this.getUsername() + " created a booking for " + property.getAddress());
-        Booking booking = new Booking("PENDING" ,start, end, this, property);
+        Booking booking = new Booking(BookingStatus.PENDING, start, end, this, property);
         controller.addBooking(booking);
     }
 
@@ -47,12 +47,5 @@ public class Student extends User {
 
 
 
-    }
-    /*  future methods
-    searchAvailableRooms()
-    */
-
-
-
-    
+    } 
 }

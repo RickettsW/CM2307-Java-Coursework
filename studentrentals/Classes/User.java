@@ -9,9 +9,7 @@ public abstract class User {
     private String email;
     private String DOB;
 
-    //Methods later needed
 
-    //Constructor
     public User(String username, String password, String firstName, String lastName, String email, String DOB){
         
         this.username = username;
@@ -22,6 +20,20 @@ public abstract class User {
         this.DOB = DOB;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User other = (User) o;
+        return username.equals(other.username);
+    }
+
+    @Override
+    public int hashCode() {
+        return username.hashCode();
+    }
+
+
     //getters
     public String getUsername(){
         return username;
@@ -30,7 +42,6 @@ public abstract class User {
     public String getHashedPassword(){
         return hashedPassword;
     }
-    //Questionable if needed 
 
     public String getFirstName(){
         return firstName;
@@ -46,7 +57,7 @@ public abstract class User {
     public String getDOB(){
         return DOB;
     }
-
+    //methods
     public void registerForAccount(){
         System.out.println("Account created for " + username);
 
